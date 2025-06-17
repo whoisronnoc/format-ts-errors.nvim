@@ -84,7 +84,7 @@ M.format_object_type = function(o)
   -- add markdown fencing?
   if M._settings.add_markdown then
     -- ensure fenced code is also surrounded by newlines
-    return ("n```typescript\n%s\n```\n"):format(formatted), lines
+    return ("```typescript\n%s\n```\n"):format(formatted), lines
   end
   --- don't add markdown fencing
   return formatted, lines

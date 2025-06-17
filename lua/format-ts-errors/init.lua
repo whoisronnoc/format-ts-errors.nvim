@@ -74,7 +74,7 @@ M.format_object_type = function(o)
   if #lines == 1 then
     -- Surround in backticks, even when no markdown requested
     if M._settings.add_markdown then
-      return ("`%s`\n"):format(formatted), lines
+      return ("```typescript\n%s\n```\n"):format(formatted), lines
     end
     -- Surround in single quote like original
     return ("'%s'\n"):format(formatted), lines
@@ -84,7 +84,7 @@ M.format_object_type = function(o)
   -- add markdown fencing?
   if M._settings.add_markdown then
     -- ensure fenced code is also surrounded by newlines
-    return ("\n```typescript\n%s\n```\n"):format(formatted), lines
+    return ("n```typescript\n%s\n```\n"):format(formatted), lines
   end
   --- don't add markdown fencing
   return formatted, lines
@@ -150,8 +150,8 @@ M.line_parsers = {
       line:find("(%S.-) '(.-)' (.- type) '(.-)'.")
     if found then
       return (
-        ("%s\n%s\n"):format(p1, ours)
-        .. ("%s\n%s"):format(p2, M.format_object_type(theirs))
+        ("%s\n%s\n"):format(p1, M.format_object_type(ours))
+        .. ("%s\n%s\n"):format(p2, M.format_object_type(theirs))
       )
     end
     return ""

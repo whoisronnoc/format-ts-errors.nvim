@@ -35,9 +35,8 @@ You can configure the output with a setup function, e.g.:
 ````
 
 For markdown syntax highlighting to work correctly you must,
-
-- 1. set the diagnostic float buffer filetype to `markdown`
-- 2. disable the extmarks for `DiagnosticFloatError`
+1. set the diagnostic float buffer filetype to `markdown`
+2. disable the extmarks for `DiagnosticFloatError`
 
 e.g.
 
@@ -54,6 +53,15 @@ vim.api.nvim_create_autocmd("CursorHold", {
   end,
 })
 ```
+
+Without disabling error highlights or enabling syntax highlighting:
+
+![screenshot 3](https://github.com/user-attachments/assets/ce9de24e-ea5b-40bb-af0a-1104db556d5b)
+
+With the recommended changes:
+
+![screenshot 4](https://github.com/user-attachments/assets/dd5cfb8b-6f9b-4067-9978-a51778bfb27b)
+
 
 Then in the lsp setup:
 

@@ -27,12 +27,33 @@ You can configure the output with a setup function, e.g.:
     "davidosomething/format-ts-errors.nvim",
     config = function()
       require("format-ts-errors").setup({
-        add_markdown = true, -- wrap output with markdown ```ts ``` markers
+        add_markdown = true, -- wrap types with markdown ```typescript ``` markers for syntax highlighting (more configuration required, see below)
         start_indent_level = 0, -- initial indent
       })
     end,
 }
 ````
+
+For markdown syntax highlighting to work correctly you must,
+
+- 1. set the diagnostic float buffer filetype to `markdown`
+- 2. disable the extmarks for `DiagnosticFloatError`
+
+e.g.
+
+```lua
+vim.api.nvim_create_autocmd("CursorHold", {
+  buffer = event.buf,
+  callback = function()
+  local b = vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })
+  if b then
+    vim.api.nvim_buf_set_option(b, "filetype", "markdown") -- set the filetype of the diagnostic float to "markdown"
+    vim.cmd("hi! clear DiagnosticError") --- clear the DiagnosticError highlight group to disable extmark overrides
+    vim.cmd("hi! link @markup.link.label.markdown_inline Normal")
+    end
+  end,
+})
+```
 
 Then in the lsp setup:
 
@@ -50,7 +71,6 @@ lspconfig.tsserver.setup({
         return
       end
 
-      -- ignore some tsserver diagnostics
       local idx = 1
       while idx <= #result.diagnostics do
         local entry = result.diagnostics[idx]
@@ -58,6 +78,8 @@ lspconfig.tsserver.setup({
         local formatter = require('format-ts-errors')[entry.code]
         entry.message = formatter and formatter(entry.message) or entry.message
 
+
+        -- ignore specific diagnostic messages (optional)
         -- codes: https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json
         if entry.code == 80001 then
           -- { message = "File is a CommonJS module; it may be converted to an ES module.", }
@@ -93,7 +115,7 @@ start_indent_level = 0
 Will yield:
 
 ````markdown
-```ts
+```typescript
 some code (not indented)
 ```
 ````
@@ -107,7 +129,7 @@ start_indent_level = 1
 Will yield:
 
 ````markdown
-```ts
+```typescript
   some code (indented)
 ```
 ````
